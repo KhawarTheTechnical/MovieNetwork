@@ -12,8 +12,8 @@ using MovieNetwork.Models;
 namespace MovieNetwork.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250503131832_initials")]
-    partial class initials
+    [Migration("20250503190100_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

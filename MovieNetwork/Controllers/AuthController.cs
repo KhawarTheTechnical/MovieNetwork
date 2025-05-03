@@ -47,21 +47,24 @@ namespace MovieNetwork.Controllers
         }
 
         [HttpPost("auth/signup")]
-        public JsonResult Signup(string username, string email, string password, string confirmPassword, string interests)
+        public IActionResult Signup(string username, string email, string password, string confirmPassword, string interests)
         {
             if (password != confirmPassword)
             {
-                return Json(new { success = false, message = "Passwords do not match." });
+                ViewData["ErrorMessage"] = "Passwords do not match.";
+                return RedirectToAction("Signup");
             }
 
             if (_context.Users.Any(u => u.Username == username))
             {
-                return Json(new { success = false, message = "Username is already taken." });
+                ViewData["ErrorMessage"] = "Username is already taken.";
+                return RedirectToAction("Signup");
             }
 
             if (_context.Users.Any(u => u.Email == email))
             {
-                return Json(new { success = false, message = "Email is already registered." });
+                ViewData["ErrorMessage"] = "Email is already registered.";
+                return RedirectToAction("Signup");
             }
 
             var passwordHasher = new PasswordHasher<User>();
@@ -69,14 +72,15 @@ namespace MovieNetwork.Controllers
             {
                 Username = username,
                 Email = email,
-                Interests = interests
+                Interests = interests,
+                Password = passwordHasher.HashPassword(null, password)
             };
-            user.Password = passwordHasher.HashPassword(user, password);
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            return Json(new { success = true });
+            ViewData["SuccessMessage"] = "Signup successful! You can now log in.";
+            return RedirectToAction("Login");
         }
 
         [HttpGet("auth/logout")]

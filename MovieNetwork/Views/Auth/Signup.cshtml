@@ -1,37 +1,87 @@
 @{
     ViewData["Title"] = "Signup";
 }
-<h1>Signup Page</h1>
-<p>Fill out the form below to create a new account.</p>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 120px); margin-top: 60px;">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
+        <div class="card-body">
+            <h2 class="text-center mb-4" style="font-weight: bold; color: #333;">Create Your Account</h2>
+            <p class="text-center text-muted mb-4">Join MovieNetwork and start exploring!</p>
 
-<form id="signupForm" method="post" asp-action="Signup" asp-controller="Auth">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control" id="username" name="username" required />
-        <small class="text-danger" id="usernameError"></small>
+            <!-- Display TempData ErrorMessage -->
+            @if (ViewData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @ViewData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form id="signupForm" method="post" asp-action="Signup" asp-controller="Auth">
+                <div class="form-group mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required />
+                    <small class="text-danger" id="usernameError"></small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required />
+                    <small class="text-danger" id="emailError"></small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required />
+                    <small class="text-muted">Password must be at least 6 characters long.</small>
+                    <div id="passwordStrength" class="mt-2"></div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required />
+                    <small class="text-danger" id="confirmPasswordError"></small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="interests" class="form-label">Interests</label>
+                    <textarea class="form-control" id="interests" name="interests" rows="3" placeholder="Tell us about your interests"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" style="border-radius: 25px;">Signup</button>
+            </form>
+
+            <div class="text-center mt-4">
+                <a asp-action="Login" asp-controller="Auth" class="text-decoration-none" style="color: #007bff;">Already have an account? Log in here</a>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" name="email" required />
-        <small class="text-danger" id="emailError"></small>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" required />
-        <small class="text-muted">Password must be at least 6 characters long.</small>
-        <div id="passwordStrength" class="mt-2"></div>
-    </div>
-    <div class="form-group">
-        <label for="confirmPassword">Confirm Password</label>
-        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
-        <small class="text-danger" id="confirmPasswordError"></small>
-    </div>
-    <div class="form-group">
-        <label for="interests">Interests</label>
-        <textarea class="form-control" id="interests" name="interests" rows="3"></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Signup</button>
-</form>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: #fff;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .card {
+        background-color: #fff;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 25px;
+        padding: 10px 15px;
+    }
+
+    .btn-primary {
+        background-color: #6a11cb;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #2575fc;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+</style>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
