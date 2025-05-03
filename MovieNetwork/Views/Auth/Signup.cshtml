@@ -1,0 +1,128 @@
+@{
+    ViewData["Title"] = "Signup";
+}
+<h1>Signup Page</h1>
+<p>Fill out the form below to create a new account.</p>
+
+<form id="signupForm" method="post" asp-action="Signup" asp-controller="Auth">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" id="username" name="username" required />
+        <small class="text-danger" id="usernameError"></small>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" required />
+        <small class="text-danger" id="emailError"></small>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required />
+        <small class="text-muted">Password must be at least 6 characters long.</small>
+        <div id="passwordStrength" class="mt-2"></div>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
+        <small class="text-danger" id="confirmPasswordError"></small>
+    </div>
+    <div class="form-group">
+        <label for="interests">Interests</label>
+        <textarea class="form-control" id="interests" name="interests" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Signup</button>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
+        const passwordStrength = document.getElementById("passwordStrength");
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+        const usernameInput = document.getElementById("username");
+        const emailInput = document.getElementById("email");
+        const interestsInput = document.getElementById("interests");
+        const usernameError = document.getElementById("usernameError");
+        const emailError = document.getElementById("emailError");
+        const signupButton = document.querySelector("button[type='submit']");
+        const signupForm = document.getElementById("signupForm");
+
+        function validateForm() {
+            const isPasswordValid = passwordInput.value.length >= 6 && passwordInput.value === confirmPasswordInput.value;
+            const isUsernameValid = usernameInput.value.trim().length > 0 && !usernameError.textContent;
+            const isEmailValid = emailInput.value.trim().length > 0 && !emailError.textContent;
+            const isInterestsValid = interestsInput.value.trim().length > 0;
+
+            signupButton.disabled = !(isPasswordValid && isUsernameValid && isEmailValid && isInterestsValid);
+        }
+
+        passwordInput.addEventListener("input", function () {
+            const value = passwordInput.value;
+            let strength = "Weak";
+            if (value.length >= 6 && /[A-Z]/.test(value) && /[0-9]/.test(value)) {
+                strength = "Strong";
+            } else if (value.length >= 6) {
+                strength = "Moderate";
+            }
+            passwordStrength.textContent = `Password Strength: ${strength}`;
+            passwordStrength.style.color = strength === "Strong" ? "green" : strength === "Moderate" ? "orange" : "red";
+            validateForm();
+        });
+
+        confirmPasswordInput.addEventListener("input", function () {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+            } else {
+                confirmPasswordError.textContent = "";
+            }
+            validateForm();
+        });
+
+        usernameInput.addEventListener("blur", function () {
+            fetch(`/auth/check-username?username=${usernameInput.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    usernameError.textContent = data.exists ? "Username is already taken." : "";
+                    validateForm();
+                });
+        });
+
+        emailInput.addEventListener("blur", function () {
+            fetch(`/auth/check-email?email=${emailInput.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    emailError.textContent = data.exists ? "Email is already registered." : "";
+                    validateForm();
+                });
+        });
+
+        interestsInput.addEventListener("input", function () {
+            if (interestsInput.value.trim().length === 0) {
+                interestsInput.setCustomValidity("Please provide your interests.");
+            } else {
+                interestsInput.setCustomValidity("");
+            }
+            validateForm();
+        });
+
+        signupForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const formData = new FormData(signupForm);
+            fetch(signupForm.action, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Signup successful! Redirecting to login...");
+                    window.location.href = "/auth/login";
+                } else {
+                    alert(data.message || "An error occurred during signup.");
+                }
+            });
+        });
+
+        validateForm();
+    });
+</script>

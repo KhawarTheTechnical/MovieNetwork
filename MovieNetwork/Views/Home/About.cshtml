@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "About";
+}
+<h1>About Us</h1>
+<p>@ViewData["TeamInfo"]</p>
+<p>@ViewData["Mission"]</p>
+
+<div id="animation-container">
+    <p>Explore the features of MovieNetwork!</p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("animation-container");
+        container.style.transition = "opacity 2s ease-in-out";
+        container.style.opacity = 0;
+
+        setTimeout(() => {
+            container.style.opacity = 1;
+        }, 500);
+    });
+</script>
+
+<style>
+    #animation-container {
+        font-size: 1.2em;
+        color: #333;
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
